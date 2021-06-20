@@ -19,8 +19,7 @@ const checkRegistered = ({ username, password }) => {
     (user) => user.username === username && user.password === password
   );
 
-  if (foundUser) return foundUser.token;
-  else return undefined;
+  return foundUser ? foundUser : undefined;
 };
 
 const checkAvailable = ({ username, password, email }) => {
@@ -44,12 +43,17 @@ app.post('/login', (req, res) => {
   console.log('Login request received');
   console.log(req.body);
 
-  const userToken = checkRegistered(req.body);
-  console.log(userToken);
+  const user = checkRegistered(req.body);
+  console.log(user);
 
-  if (userToken !== undefined)
-    res.send({ statusMessage: 'SUCCESS', token: userToken });
-  else res.send({ statusMessage: 'UNREGISTERED' });
+  // if (userToken !== undefined) res.send({ statusMessage: 'SUCCESS', user });
+  // else res.send({ statusMessage: 'UNREGISTERED' });
+
+  res.send(
+    usertoken !== undefined
+      ? { statusMessage: 'SUCCESS', user }
+      : { statusMessage: 'UNREGISTERED' }
+  );
 });
 
 app.post('/register', (req, res) => {
