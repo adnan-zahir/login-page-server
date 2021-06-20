@@ -47,8 +47,9 @@ app.post('/login', (req, res) => {
   const userToken = checkRegistered(req.body);
   console.log(userToken);
 
-  if (userToken !== undefined) res.json(userToken);
-  else res.json('');
+  if (userToken !== undefined)
+    res.send({ statusMessage: 'SUCCESS', token: userToken });
+  else res.send({ statusMessage: 'UNREGISTERED' });
 });
 
 app.post('/register', (req, res) => {
