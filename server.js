@@ -50,7 +50,7 @@ app.post('/login', (req, res) => {
   // else res.send({ statusMessage: 'UNREGISTERED' });
 
   res.send(
-    usertoken !== undefined
+    user !== undefined
       ? { statusMessage: 'SUCCESS', user }
       : { statusMessage: 'UNREGISTERED' }
   );
