@@ -5,6 +5,7 @@ const hat = require('hat');
 const app = express();
 const port = process.env.PORT || 4000;
 
+// REGISTERED USERS ARRAY
 const registeredUsers = [
   {
     username: 'admin',
@@ -14,53 +15,71 @@ const registeredUsers = [
   },
 ];
 
-const checkRegistered = ({ username, password }) => {
-  const foundUser = registeredUsers.find(
-    (user) => user.username === username && user.password === password
-  );
+// CHECKS
+class Check {
+  static isRegistered({ username, password }) {
+    const foundUser = registeredUsers.find(
+      (user) => user.username === username && user.password === password
+    );
 
-  return foundUser ? foundUser : undefined;
-};
+    return foundUser ? foundUser.token : undefined;
+  }
 
-const checkAvailable = ({ username, password, email }) => {
-  console.log(`Username : ${username}, Email : ${email}`);
-  const foundUsername = registeredUsers.find(
-    (user) => user.username === username
-  );
+  static isAvailable({ username, email }) {
+    console.log(`Username : ${username}, Email : ${email}`);
+    const foundUsername = registeredUsers.find(
+      (user) => user.username === username
+    );
 
-  const foundEmail = registeredUsers.find((user) => user.email === email);
+    const foundEmail = registeredUsers.find((user) => user.email === email);
 
-  console.log(foundUsername, foundEmail);
+    console.log(foundUsername, foundEmail);
 
-  if (!foundUsername && !foundEmail) return true;
-  else return false;
-};
+    return !foundUsername && !foundEmail;
+  }
 
+  static userInfo(token) {
+    console.log(`Token : ${token}`);
+    const foundUser = registeredUsers.find((user) => {
+      return user.token === token;
+    });
+
+    return foundUser ? foundUser : undefined;
+  }
+}
+
+// MIDDLEWARES
 app.use(cors());
 app.use(express.json());
 
+// ROUTES
+// LOGIN
 app.post('/login', (req, res) => {
   console.log('Login request received');
   console.log(req.body);
 
-  const user = checkRegistered(req.body);
-  console.log(user);
-
-  // if (userToken !== undefined) res.send({ statusMessage: 'SUCCESS', user });
-  // else res.send({ statusMessage: 'UNREGISTERED' });
+  const token = Check.isRegistered({
+    username: req.body.username,
+    password: req.body.password,
+  });
+  console.log(token);
 
   res.send(
-    user !== undefined
-      ? { statusMessage: 'SUCCESS', user }
+    token !== undefined
+      ? { statusMessage: 'SUCCESS', token }
       : { statusMessage: 'UNREGISTERED' }
   );
 });
 
+// REGISTER
 app.post('/register', (req, res) => {
   console.log('Register request received');
   console.log(req.body);
 
-  const userAvailable = checkAvailable(req.body);
+  const userAvailable = Check.isAvailable({
+    username: req.body.username,
+    email: req.body.email,
+  });
   console.log(userAvailable ? 'Available' : 'Not available');
 
   if (!userAvailable) {
@@ -78,6 +97,17 @@ app.post('/register', (req, res) => {
   res.send({ statusMessage: 'SUCCESS' });
 });
 
+// GET CREDENTIALS
+app.post('/credentials', (req, res) => {
+  const { token } = req.body;
+  console.log('Getting credentials');
+  const credentials = Check.userInfo(token);
+  console.log(credentials ? credentials : 'Not Found');
+
+  res.send(credentials ? credentials : { statusMessage: 'UNREGISTERED' });
+});
+
+// SERVER LISTEN
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
