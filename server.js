@@ -12,6 +12,10 @@ const registeredUsers = [
     password: 'admin',
     email: 'admin@mail.com',
     token: '134vb9qwye2',
+    mobile_no: '0888-XXXX-XX99',
+    full_name: 'Admin One',
+    address: 'Management St. 48-D',
+    city: 'New York City',
   },
 ];
 
@@ -90,6 +94,10 @@ app.post('/register', (req, res) => {
   const newUser = {
     ...req.body,
     token: hat(),
+    mobile_no: '',
+    full_name: '',
+    address: '',
+    city: '',
   };
 
   registeredUsers.push(newUser);
