@@ -14,7 +14,7 @@ let registeredUsers = [
     token: '134vb9qwye2',
     mobile_no: '0888-XXXX-XX99',
     full_name: 'Admin One',
-    address: 'Management St. 48-D',
+    address: '670 Lafayette Ave, Brooklyn',
     city: 'New York City',
     bio: 'Consectetur quae porro id suscipit placeat? Cupiditate non veritatis distinctio ut aut eius corrupti Sapiente eos ut maxime alias ex.',
   },
