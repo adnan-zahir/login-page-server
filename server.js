@@ -6,7 +6,7 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 // REGISTERED USERS ARRAY
-const registeredUsers = [
+let registeredUsers = [
   {
     username: 'admin',
     password: 'admin',
@@ -16,6 +16,7 @@ const registeredUsers = [
     full_name: 'Admin One',
     address: 'Management St. 48-D',
     city: 'New York City',
+    bio: 'Consectetur quae porro id suscipit placeat? Cupiditate non veritatis distinctio ut aut eius corrupti Sapiente eos ut maxime alias ex.',
   },
 ];
 
@@ -98,6 +99,7 @@ app.post('/register', (req, res) => {
     full_name: '',
     address: '',
     city: '',
+    bio: 'Hello! It\'s me!'
   };
 
   registeredUsers.push(newUser);
@@ -114,6 +116,42 @@ app.post('/credentials', (req, res) => {
 
   res.send(credentials ? credentials : { statusMessage: 'UNREGISTERED' });
 });
+
+// UPDATE PROFILE
+app.put('/credentials', (req, res) => {
+  const { token, credentials } = req.body;
+  console.log(
+    'Updating:',
+    'Token : ' + token,
+    'Credentials : ', credentials
+  )
+
+  const targetUser = Check.userInfo(token);
+
+  if (!targetUser || targetUser === undefined) return res.send({ statusMessage: 'UNREGISTERED'});
+
+  const slotData = registeredUsers.filter(
+    (user) => user.token !== token
+  );
+
+  const updatedData = {
+    ...targetUser,
+    mobile_no: credentials.mobile_no,
+    password: credentials.password,
+    full_name: credentials.full_name,
+    address: credentials.address,
+    city: credentials.city,
+    bio: credentials.bio,
+  }
+
+  registeredUsers = [
+    ...slotData,
+    updatedData,
+  ]
+  console.log('Updated Data : ', updatedData);
+
+  res.send({ statusMessage: 'SUCCESS', credentials: updatedData });
+})
 
 // SERVER LISTEN
 app.listen(port, () => {
